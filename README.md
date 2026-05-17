@@ -119,7 +119,7 @@ Identificação do paciente é pseudônimo, não usa nome nem documento — alin
 ## Links públicos para correção
 
 - Repositório GitHub: https://github.com/diogozeq/fase3-cap1-cardioia-conectada-iot-visualizacao-dados
-- Projeto Wokwi: *inserir link aqui*
+- Projeto Wokwi: https://wokwi.com/projects/464290026879197185
 
 ---
 
