@@ -1,7 +1,7 @@
 Diogo Zequini - RM 565535 - Turma 2TIAOA
 FIAP - 2 Ano - Fase 3 (2026) - CardioIA: IoT, Edge, Cloud e Visualizacao
 
-Repositorio GitHub publico: inserir link aqui
+Repositorio GitHub publico: https://github.com/diogozeq/fase3-cap1-cardioia-conectada-iot-visualizacao-dados
 Projeto Wokwi: inserir link aqui
 
 Observacao: nao entreguei o video do Ir Alem 2 nesta fase.
