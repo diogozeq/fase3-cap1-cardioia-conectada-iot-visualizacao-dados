@@ -189,7 +189,7 @@ QoS 1 para vitals/alerts. Identificação do paciente é pseudônimo, não usa n
 
 ## Links públicos para correção
 
-- Repositório GitHub: *inserir link aqui*
+- Repositório GitHub: https://github.com/diogozeq/fase3-cap1-cardioia-conectada-iot-visualizacao-dados
 - Projeto Wokwi: *inserir link aqui*
 
 ---
