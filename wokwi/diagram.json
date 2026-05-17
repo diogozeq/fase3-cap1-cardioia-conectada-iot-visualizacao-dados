@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "author": "CardioIA",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-dht22", "id": "dht", "top": -98.1, "left": 175.8, "attrs": {} },
+    { "type": "wokwi-pushbutton", "id": "btnBpm", "top": 125, "left": 180, "attrs": { "color": "red", "label": "BPM" } },
+    { "type": "wokwi-slide-switch", "id": "swWifi", "top": 205, "left": 170, "attrs": { "label": "WiFi" } },
+    { "type": "wokwi-slide-switch", "id": "swMove", "top": 265, "left": 170, "attrs": { "label": "Move" } }
+  ],
+  "connections": [
+    [ "esp:3V3", "dht:VCC", "red", [ "h0" ] ],
+    [ "esp:GND.1", "dht:GND", "black", [ "h0" ] ],
+    [ "esp:D15", "dht:SDA", "green", [ "h0" ] ],
+    [ "esp:D4", "btnBpm:1.l", "green", [ "h0" ] ],
+    [ "esp:GND.1", "btnBpm:2.l", "black", [ "h0" ] ],
+    [ "esp:D18", "swWifi:2", "blue", [ "h0" ] ],
+    [ "esp:3V3", "swWifi:1", "red", [ "h0" ] ],
+    [ "esp:GND.1", "swWifi:3", "black", [ "h0" ] ],
+    [ "esp:D19", "swMove:2", "orange", [ "h0" ] ],
+    [ "esp:3V3", "swMove:1", "red", [ "h0" ] ],
+    [ "esp:GND.1", "swMove:3", "black", [ "h0" ] ]
+  ],
+  "dependencies": {}
+}
