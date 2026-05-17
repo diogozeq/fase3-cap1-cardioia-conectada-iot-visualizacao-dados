@@ -29,7 +29,7 @@ O ESP32 executa o seguinte ciclo:
 
 ## Resiliencia offline
 
-O enunciado cita SPIFFS, mas tambem informa que no Wokwi esse recurso e volatil. Por isso, a implementacao usa um buffer circular em memoria com limite de 2.000 amostras. Essa escolha preserva o comportamento esperado de Edge Computing no simulador: o dispositivo continua coletando dados mesmo offline e sincroniza o backlog quando volta a ficar online.
+O enunciado cita SPIFFS, mas tambem informa que no Wokwi esse recurso e volatil. Por isso, a implementacao usa um buffer circular em memoria com limite de 240 amostras (aproximadamente 20 minutos de coleta com intervalo de 5 segundos). O limite foi calibrado para caber confortavelmente na DRAM do ESP32 e cobrir cenarios realistas de queda de conectividade em ambiente domiciliar. Essa escolha preserva o comportamento esperado de Edge Computing no simulador: o dispositivo continua coletando dados mesmo offline e sincroniza o backlog quando volta a ficar online.
 
 Quando o limite e atingido, a leitura mais antiga e descartada. Essa politica foi escolhida porque, em monitoramento cardiologico, as leituras mais recentes tendem a ser mais relevantes para decisao imediata. Em um ESP32 fisico, a mesma estrategia pode ser persistida em SPIFFS ou microSD.
 

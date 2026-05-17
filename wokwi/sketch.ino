@@ -28,7 +28,7 @@ const char* TOPIC_STATUS = "cardioia/system/status";
 
 const unsigned long SAMPLE_INTERVAL_MS = 5000;
 const unsigned long BPM_WINDOW_MS = 15000;
-const int OFFLINE_BUFFER_LIMIT = 2000;
+const int OFFLINE_BUFFER_LIMIT = 240;
 
 DHT dht(DHT_PIN, DHT_TYPE);
 WiFiClient netClient;
@@ -41,8 +41,8 @@ struct VitalSample {
   int bpm;
   bool movement;
   bool wifiRequested;
-  char riskLevel[16];
-  char alertReason[96];
+  char riskLevel[12];
+  char alertReason[64];
 };
 
 VitalSample offlineBuffer[OFFLINE_BUFFER_LIMIT];
