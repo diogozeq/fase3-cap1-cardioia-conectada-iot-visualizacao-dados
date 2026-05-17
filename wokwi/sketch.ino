@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <WiFi.h>
-#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
@@ -18,11 +17,9 @@
 const char* WIFI_SSID = "Wokwi-GUEST";
 const char* WIFI_PASSWORD = "";
 
-// Substitua pelos dados reais do HiveMQ Cloud.
-const char* MQTT_SERVER = "SEU_CLUSTER.s1.eu.hivemq.cloud";
-const int MQTT_PORT = 8883;
-const char* MQTT_USER = "SEU_USUARIO";
-const char* MQTT_PASSWORD = "SUA_SENHA";
+// Broker publico HiveMQ - sem necessidade de cadastro ou credenciais.
+const char* MQTT_SERVER = "broker.hivemq.com";
+const int MQTT_PORT = 1883;
 
 const char* PATIENT_ID = "cardioia-paciente-001";
 const char* TOPIC_VITALS = "cardioia/patients/cardioia-paciente-001/vitals";
@@ -34,8 +31,8 @@ const unsigned long BPM_WINDOW_MS = 15000;
 const int OFFLINE_BUFFER_LIMIT = 2000;
 
 DHT dht(DHT_PIN, DHT_TYPE);
-WiFiClientSecure secureClient;
-PubSubClient mqtt(secureClient);
+WiFiClient netClient;
+PubSubClient mqtt(netClient);
 
 struct VitalSample {
   unsigned long timestampMs;
@@ -149,12 +146,11 @@ void ensureMqtt() {
   if (WiFi.status() != WL_CONNECTED || mqtt.connected()) return;
 
   mqtt.setServer(MQTT_SERVER, MQTT_PORT);
-  secureClient.setInsecure(); // Simplifica o TLS no ambiente educacional/Wokwi.
 
-  Serial.println("[MQTT] Conectando ao HiveMQ Cloud...");
+  Serial.println("[MQTT] Conectando ao broker publico HiveMQ...");
   String clientId = String("cardioia-esp32-") + String(random(0xffff), HEX);
 
-  if (mqtt.connect(clientId.c_str(), MQTT_USER, MQTT_PASSWORD)) {
+  if (mqtt.connect(clientId.c_str())) {
     Serial.println("[MQTT] Conectado.");
     mqtt.publish(TOPIC_STATUS, "{\"device\":\"esp32\",\"status\":\"online\"}", true);
   } else {
@@ -235,7 +231,6 @@ void setup() {
   pinMode(MOVEMENT_SWITCH_PIN, INPUT);
 
   dht.begin();
-  secureClient.setInsecure();
   bpmWindowStartedAt = millis();
 
   Serial.println("CardioIA Fase 3 - Edge/Fog/Cloud IoT");

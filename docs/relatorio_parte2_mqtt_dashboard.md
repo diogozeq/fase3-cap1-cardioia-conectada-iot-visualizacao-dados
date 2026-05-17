@@ -4,20 +4,19 @@
 
 A segunda parte da Fase 3 integra o dispositivo ESP32 ao ambiente de nuvem usando MQTT e apresenta os dados em um dashboard Node-RED. Essa etapa representa a camada Fog/Cloud do CardioIA, conectando captura local, transmissao de dados e visualizacao em tempo real. O resultado e um pipeline ponta a ponta no qual cada batimento simulado no Wokwi e refletido em poucos segundos em graficos, gauges e indicadores de alerta acessiveis a equipe clinica.
 
-O desenho da arquitetura privilegia tres pontos: (i) padronizar o payload para que qualquer consumidor (Node-RED, API REST, notebook de IA) consiga interpretar o mesmo formato; (ii) usar um broker gerenciado para reduzir custo operacional na simulacao academica; (iii) manter o Edge responsavel pelas regras criticas de alerta, de modo que o Node-RED atue como camada de visualizacao e nao como unico ponto de decisao.
+O desenho da arquitetura privilegia tres pontos: (i) padronizar o payload para que qualquer consumidor consiga interpretar o mesmo formato; (ii) usar um broker publico para reduzir friccao operacional na simulacao academica; (iii) manter o Edge responsavel pelas regras criticas de alerta, de modo que o Node-RED atue como camada de visualizacao e nao como unico ponto de decisao.
 
 ## Arquitetura de comunicacao
 
 ```text
-ESP32 (Wokwi) --TLS/MQTT--> HiveMQ Cloud --MQTT--> Node-RED Dashboard
-                                              \--> API REST Python --> E-mail
+ESP32 (Wokwi) --MQTT--> broker.hivemq.com:1883 --MQTT--> Node-RED Dashboard
 ```
 
-O ESP32 publica em tres topicos. O Node-RED se inscreve nos topicos de vitals e alerts e mantem o status de conexao em um gauge dedicado. A API REST consome eventos pontuais via HTTP, complementando o canal MQTT quando ha necessidade de integracao sincrona com sistemas externos.
+O ESP32 publica em tres topicos. O Node-RED se inscreve nos topicos de vitals e alerts e mantem o status de conexao em um gauge dedicado.
 
 ## Comunicacao MQTT
 
-O broker definido para a entrega e o HiveMQ Cloud, escolhido por oferecer plano free para simulacao, suporte a TLS na porta 8883 e autenticacao por usuario e senha. O ESP32 publica mensagens JSON em topicos padronizados:
+O broker definido para a entrega e o broker publico HiveMQ (`broker.hivemq.com:1883`), escolhido por nao exigir cadastro, credenciais ou TLS, viabilizando demonstracao imediata a partir do Wokwi. Para um cenario de producao, a mesma arquitetura suporta migracao para HiveMQ Cloud, AWS IoT Core ou Azure IoT Hub apenas trocando as constantes de conexao no sketch e no Node-RED. O ESP32 publica mensagens JSON em topicos padronizados:
 
 - `cardioia/patients/cardioia-paciente-001/vitals`
 - `cardioia/patients/cardioia-paciente-001/alerts`
@@ -25,7 +24,7 @@ O broker definido para a entrega e o HiveMQ Cloud, escolhido por oferecer plano 
 
 O payload de vitals inclui identificador do paciente, timestamp em milissegundos, temperatura, umidade, BPM, movimento, status de conexao, nivel de risco e motivo do alerta. O payload de alerts e mais enxuto e carrega tipo do alerta, severidade e leitura associada. O topico de system/status carrega RSSI, uso de memoria livre e tamanho atual do buffer offline, permitindo monitorar o dispositivo.
 
-O formato JSON foi escolhido por ser legivel, facil de processar no Node-RED via function nodes e compativel com APIs REST e bases SQL/NoSQL futuras. QoS 1 e usado para vitals e alerts, garantindo pelo menos uma entrega; retain e habilitado em system/status para que um novo subscriber receba imediatamente o ultimo estado do dispositivo.
+O formato JSON foi escolhido por ser legivel, facil de processar no Node-RED via function nodes e compativel com bases SQL/NoSQL futuras. QoS 1 e usado para vitals e alerts, garantindo pelo menos uma entrega; retain e habilitado em system/status para que um novo subscriber receba imediatamente o ultimo estado do dispositivo.
 
 ## Configuracao do dashboard
 
@@ -39,7 +38,7 @@ O dashboard principal da Fase 3 e o Node-RED, conforme solicitado no enunciado. 
 - Indicador textual de alerta com mudanca de cor.
 - Gauge de buffer offline, evidenciando a resiliencia do Edge.
 
-Para reproduzir, basta importar o JSON no Node-RED, instalar `node-red-dashboard`, configurar credenciais do HiveMQ Cloud no node MQTT broker e acessar `/ui`. Os mesmos dados ficam disponiveis para uma eventual integracao Grafana Cloud usando MQTT Source ou ponte via InfluxDB.
+Para reproduzir, basta importar o JSON no Node-RED, instalar `node-red-dashboard` e acessar `/ui`. O broker publico ja vem pre-configurado, dispensando credenciais. Os mesmos dados ficam disponiveis para uma eventual integracao Grafana Cloud usando MQTT Source ou ponte via InfluxDB.
 
 ## Regras de alerta
 
@@ -54,10 +53,10 @@ Os limiares foram escolhidos com base em referencia clinica simples e podem ser 
 
 ## Seguranca e boas praticas
 
-Mesmo em ambiente academico, a entrega ja considera praticas que se aplicam a IoT medica real:
+Mesmo usando broker publico para fins de demonstracao, a entrega ja documenta as praticas que se aplicam a IoT medica real:
 
-- TLS obrigatorio no MQTT, evitando trafego de sinais vitais em texto claro.
-- Credenciais fora do codigo final via variaveis no `.env` da API e placeholders no sketch.
+- Migracao para broker privado com TLS na porta 8883 e autenticacao usuario/senha em producao, evitando trafego de sinais vitais em texto claro.
+- Credenciais fora do codigo final via variaveis de ambiente quando migrado para broker autenticado.
 - Identificacao por `patient_id` pseudonimo no topico, alinhada a LGPD (sem nome ou documento).
 - Logs de status de conexao para auditoria, em consonancia com a governanca discutida na Fase 1.
 

@@ -4,19 +4,10 @@ FIAP - 2 Ano - Fase 3 (2026) - CardioIA: IoT, Edge, Cloud e Visualizacao
 Repositorio GitHub publico: https://github.com/diogozeq/fase3-cap1-cardioia-conectada-iot-visualizacao-dados
 Projeto Wokwi: inserir link aqui
 
-Observacao: nao entreguei o video do Ir Alem 2 nesta fase.
-
 Arquivos principais:
 - README.md
 - wokwi/sketch.ino
 - wokwi/diagram.json
 - node-red/flows_cardioia.json
-- api-rest/app.py
-- api-rest/client.py
-- api-rest/risk.py
-- api-rest/emailer.py
-- notebooks/analise_series_temporais_cardioia.ipynb
 - docs/relatorio_parte1_edge.md
 - docs/relatorio_parte2_mqtt_dashboard.md
-- docs/relatorio_ir_alem_1_rest_email.md
-- docs/relatorio_ir_alem_2_ia_series_temporais.md
